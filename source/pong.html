@@ -64,7 +64,7 @@
 	 * 
 	 * @type {Object}
 	 */
-	Player = function(X, Y, keyUp, keyDown, colorToMove){
+	Player = function(X, Y, keyUp, keyDown, pX, colorToMove){
 		return {
 			x: X,
 			y: Y,
@@ -93,12 +93,14 @@
 			 */
 			draw: function() {
 				ctx.fillRect(this.x, this.y, this.width, this.height);
+				ctx.font = "26px Helvetica";
+				ctx.fillText(this.score, pX, this.y + 20);	
 			}			
 		};
 	},
 
-	player = new Player(null, null, UpArrow, DownArrow,'magenta');
-	player2 = new Player(null, null, 87	, 83,'cyan'); //keyUp = w and key down = s and it is not sensitive key
+	player = new Player(null, null, UpArrow, DownArrow, WIDTH  / 2 - 35, 'magenta');
+	player2 = new Player(null, null, 87	, 83, WIDTH  / 2 + 20, 'cyan'); //keyUp = w and key down = s and it is not sensitive key
 
 
 
@@ -113,13 +115,11 @@
 
       	tracker.on('track', function(event) {
         	event.data.forEach(function(rect) {
-        		//console.log(player.color, player2.color, rect.color, versus)
           		if (rect.color === player.color)
           			player.pos = rect.y * 2.7;
           		if (versus){
           			if (rect.color === player2.color){
           				player2.pos = rect.y * 2.7;
-          				//console.log("passou");
           			}
 
           		}
@@ -137,7 +137,7 @@
 	ai = {
 		x: null,
 		y: null,
-
+		score: 0, 
 		width:  20,
 		height: 100,
 
@@ -158,6 +158,8 @@
 		 */
 		draw: function() {
 			ctx.fillRect(this.x, this.y, this.width, this.height);
+			ctx.font = "26px Helvetica";
+			ctx.fillText(this.score, WIDTH  / 2 + 20, 20);
 		}
 	},
 
@@ -242,6 +244,17 @@
 			// reset the ball when ball outside of the canvas in the
 			// x direction
 			if (0 > this.x + this.side || this.x > WIDTH) {
+				if (versus)
+					if (pdle === player)
+						player2.score += 1;
+					else
+						player.score += 1;
+				else
+					if (pdle === player)
+						ai.score += 1;
+					else
+						player.score += 1;
+
 				this.serve(pdle === player ? 1 : -1);
 			}
 		},
@@ -255,10 +268,10 @@
 			//ctx.beginPath();
 			//ctx.arc(WIDTH / 2, HEIGHT / 2, 20, 0, 2 * Math.PI, false);
 			//qctx.fill();
-			//ctx.lineWidth = 5;
+			//ctx.lineWidth = 5Cont;
 			//ctx.stroke();
 		}
-	};	
+	};
 
 	/**
 	 * Starts the game
@@ -269,6 +282,7 @@
 		canvas.width = WIDTH;
 		canvas.height = HEIGHT;
 		ctx = canvas.getContext("2d");
+		text = canvas.getContext("2d");
 		document.body.appendChild(canvas);
 
 		keystate = {};
