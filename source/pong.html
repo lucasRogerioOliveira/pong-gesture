@@ -3,7 +3,6 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Pong Gesture</title>
-	<link rel="stylesheet" href="../js/assets/demo.css">
 
 	<script src="../js/build/tracking-min.js"></script>
 	<script src="../../dat-gui/build/dat.gui.min.js"></script>
@@ -45,9 +44,6 @@
 
 	pi = Math.PI,
 
-	pos1 = 0,
-	pos2 = 0,
-
 	UpArrow   = 38,
 	DownArrow = 40,
 
@@ -68,7 +64,6 @@
 		return {
 			x: X,
 			y: Y,
-			pos: 0,
 			score: 0,
 			color: colorToMove,
 			width:  20,
@@ -81,8 +76,6 @@
 				if (!withCam) {
 					if (keystate[keyUp]) this.y -= 7;
 					if (keystate[keyDown]) this.y += 7;
-				} else {
-					this.y = this.pos;
 				}
 				// keep the paddle inside of the canvas				
 				this.y = Math.max(Math.min(this.y, HEIGHT - this.height), 0);
@@ -94,15 +87,10 @@
 			draw: function() {
 				ctx.fillRect(this.x, this.y, this.width, this.height);
 				ctx.font = "26px Helvetica";
-				ctx.fillText(this.score, pX, this.y + 20);	
+				ctx.fillText(this.score, pX, 20);	
 			}			
 		};
-	},
-
-	player = new Player(null, null, UpArrow, DownArrow, WIDTH  / 2 - 35, 'magenta');
-	player2 = new Player(null, null, 87	, 83, WIDTH  / 2 + 20, 'cyan'); //keyUp = w and key down = s and it is not sensitive key
-
-
+	};
 
     window.onload = function() {
       	var video = document.getElementById('video');
@@ -116,10 +104,10 @@
       	tracker.on('track', function(event) {
         	event.data.forEach(function(rect) {
           		if (rect.color === player.color)
-          			player.pos = rect.y * 2.7;
+          			player.y = rect.y * 2.7;
           		if (versus){
           			if (rect.color === player2.color){
-          				player2.pos = rect.y * 2.7;
+          				player2.y = rect.y * 2.7;
           			}
 
           		}
@@ -267,8 +255,8 @@
 			//faz a bola ser uma bola... mas acaba não se movendo (ainda n entendi pq)
 			//ctx.beginPath();
 			//ctx.arc(WIDTH / 2, HEIGHT / 2, 20, 0, 2 * Math.PI, false);
-			//qctx.fill();
-			//ctx.lineWidth = 5Cont;
+			//ctx.fill();
+			//ctx.lineWidth = 5;
 			//ctx.stroke();
 		}
 	};
@@ -284,6 +272,10 @@
 		ctx = canvas.getContext("2d");
 		text = canvas.getContext("2d");
 		document.body.appendChild(canvas);
+
+		player = new Player(null, null, UpArrow, DownArrow, WIDTH  / 2 - 35, 'magenta');
+		player2 = new Player(null, null, 87	, 83, WIDTH  / 2 + 20, 'cyan'); //keyUp = w and key down = s and it is not sensitive key
+
 
 		keystate = {};
 		// keep track of keyboard presses
