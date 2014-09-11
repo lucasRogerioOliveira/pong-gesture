@@ -107,6 +107,17 @@ Primeiro, vamos definir nosso campo onde irá acontecer as disputas de pong. Par
 
 <p>Vamos criar uma função responsável por fazer todos os desenhos, vamos chama-la de “desenhar”.</p>
 
+<pre><code>function desenhar() {
+
+        //Desenhando o retângulo na tela a partir da posição x = 0, y = 0  do tamanho dos limites da minha tela (que eu havia capturado anteriormente na variável)
+        ctx.fillRect(0, 0, LARGURA, ALTURA);
+        //entender melhor como funciona...
+        ctx.save();
+        //definindo a cor dos meus elementos em hexa decimal, sendo fff = branco.  E cada caracter é respectivamente responsável pela cor Vermelho, Verde e Azul.
+        ctx.fillStyle = "#fff";
+}
+</code></pre>
+
 <pre><code>    function desenhar() {
 
         //Desenhando o retângulo na tela a partir da posição x = 0, y = 0  do tamanho dos limites da minha tela (que eu havia capturado anteriormente na variável)
