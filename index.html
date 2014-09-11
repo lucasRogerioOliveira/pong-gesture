@@ -97,11 +97,11 @@ Primeiro, vamos definir nosso campo onde irá acontecer as disputas de pong. Par
 <p>Agora com nossas variáveis com o tamanho da tela definidas vamos usar o comando createElement("canvas ") para criar imagens por código. E criaremos uma variável ctx (abreviação de contexto) usando o comando canvas.getContext("2D " ) para informar que esse elemento irá ser 2D (sim, o canvas pode criar elementos 3D!) e para não precisarmos ficar digitando toda hora canvas.getContext("2D").alguma_coisa. Essa variável será responsável por desenhar todos os elementos do jogo, como as paletas, campo e a bola. Por fim iremos adicionar essa variável ao corpo do nosso documento HTML com o comando document.body.appendChild(canvas). Então nosso código ficará dessa forma:</p>
 
 <pre><code>function main(){
-canvas = document.createElement("canvas")
-canvas.width = LARGURA
-canvas.height = ALTURA
-ctx = canvas.getContext("2d");
-document.body.appendChild(canvas);
+    canvas = document.createElement("canvas")
+    canvas.width = LARGURA
+    canvas.height = ALTURA
+    ctx = canvas.getContext("2d");
+    document.body.appendChild(canvas);
 }
 </code></pre>
 
@@ -139,8 +139,7 @@ document.body.appendChild(canvas);
 
 <p>Se tudo até agora deu certo o resultado esperado deve ser isso:</p>
 
-<h3>
-<a name="imagem-1" class="anchor" href="#imagem-1"><span class="octicon octicon-link"></span></a>imagem 1</h3>
+<p><img src="http://s30.postimg.org/u2fszq8dd/campo_1.png" alt="campo inicial"></p>
 
 <p>Agora com nosso campo feito, vamos partir para a criação das paletas, que serão o que cada jogador irá controlar.
 Então, vamos criar um objeto, em javascript chamado Jogador. Onde o jogador irá conter, uma posição X e Y inicial, uma pontuação, e irá precisar de uma cor para que possa se mover. Vamos criar também mais duas variáveis para que caso tamanho do monitor seja diferente as paletas (jogadores) ‘consigam se adaptar ao tamanho, e não fique desproporcional, e uma última para que possamos definir a posição Y inicial dos jogadores. Então, mãos na massa!</p>
@@ -220,13 +219,11 @@ jogador2.desenhar();
 
 <p>Note que ele irá pedir autorização para capturar a sua câmera:</p>
 
-<h3>
-<a name="imagem-2" class="anchor" href="#imagem-2"><span class="octicon octicon-link"></span></a>imagem 2</h3>
+<p><img src="http://s30.postimg.org/ux6xzi5lt/pedindo_camera.png" alt="pedindo permissão (FireFox)"></p>
 
 <p>E se tudo deu certo, o seu jogo deve estar dessa maneira:</p>
 
-<h3>
-<a name="imagem-3" class="anchor" href="#imagem-3"><span class="octicon octicon-link"></span></a>imagem 3</h3>
+<p><img src="http://s30.postimg.org/f7r7ljysh/campo_2.png" alt="campo com jogadores e pontuação"></p>
 
 <p>Porém, note que mesmo que você faça os movimentos com a cor nenhuma paleta se move. Isso se deve pois a tela precisa ser “repintada”, para isso, precisamos implementar mais um trecho de código na nossa função principal (main):</p>
 
@@ -240,8 +237,7 @@ jogador2.desenhar();
 
 <p>Agora sim, as paletas devem estar se movendo conforme o esperado:</p>
 
-<h3>
-<a name="imagem-4" class="anchor" href="#imagem-4"><span class="octicon octicon-link"></span></a>imagem 4</h3>
+<p><img src="http://s30.postimg.org/cb46l9syp/campo_3.png" alt="campo com jogadores podendo se mover"></p>
 
 <p>Mas, ainda falta algo essencial, a bola! Vamos então, criar uma bola que possua o atributo diâmetro.  Vamos por enquanto apenas criar uma variável informando o diâmetro da bola, e também um método “desenhar” para que possamos enxergar se nossa bola está sendo desenhada na tela ou não, para isso digite logo após a criação dos jogadores:</p>
 
@@ -268,8 +264,7 @@ bola = new Bola(DIAMETRO_BOLA);
 
 <p>Se tudo deu certo o nosso jogo deve estar assim:</p>
 
-<h3>
-<a name="imagem-5" class="anchor" href="#imagem-5"><span class="octicon octicon-link"></span></a>imagem 5</h3>
+<p><img src="http://s30.postimg.org/t2u3hrild/campo_4.png" alt="campo com a bola"></p>
 
 <p>Vamos criar um método “configuracoes” onde irá informar a posição Y que a bola irá começar, direção para que ela irá, ângulo e afins, para isso crie uma variável dentro da classe “Bola” chamada de “lado”, onde ela vai ser 1 para ir para a direita e -1 para ir para a esquerda (imagine isso como um plano cartesiano).</p>
 
@@ -369,8 +364,7 @@ A função main no final das contas estará dessa forma:</p>
 
 <p>Pronto! O resultado esperado do game deve ser semelhante a esse:</p>
 
-<h3>
-<a name="imagem-final" class="anchor" href="#imagem-final"><span class="octicon octicon-link"></span></a>imagem final</h3>
+<p><img src="http://s30.postimg.org/exoafy9k1/campo_5.png" alt="jogo completo"></p>
 
 <h3>
 <a name="refer%C3%AAncia" class="anchor" href="#refer%C3%AAncia"><span class="octicon octicon-link"></span></a>Referência:</h3>
