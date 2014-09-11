@@ -29,21 +29,357 @@
       <div id="main" role="main">
         <div class="download-bar">
         <div class="inner">
-          <a href="https://github.com/lucAlucard/pong-gesture/tarball/master" class="download-button tar"><span>Download</span></a>
-          <a href="https://github.com/lucAlucard/pong-gesture/zipball/master" class="download-button zip"><span>Download</span></a>
-          <a href="https://github.com/lucAlucard/pong-gesture" class="code">View Pong-gesture on GitHub</a>
+          <a href="https://github.com/lucasRogerioOliveira/pong-gesture/tarball/master" class="download-button tar"><span>Download</span></a>
+          <a href="https://github.com/lucasRogerioOliveira/pong-gesture/zipball/master" class="download-button zip"><span>Download</span></a>
+          <a href="https://github.com/lucasRogerioOliveira/pong-gesture" class="code">View Pong-gesture on GitHub</a>
         </div>
         <span class="blc"></span><span class="trc"></span>
         </div>
         <article class="markdown-body">
-          <h3>
+          <h1>
+<a name="como-fazer-um-jogo-de-pong-com-realidade-aumentada-usando-trackingjs" class="anchor" href="#como-fazer-um-jogo-de-pong-com-realidade-aumentada-usando-trackingjs"><span class="octicon octicon-link"></span></a>Como fazer um jogo de Pong com realidade aumentada usando tracking.js</h1>
+
+<h3>
+<a name="grupo-lucas-rog%C3%A9rio-lucas-rodrigues" class="anchor" href="#grupo-lucas-rog%C3%A9rio-lucas-rodrigues"><span class="octicon octicon-link"></span></a>Grupo: Lucas Rogério, Lucas Rodrigues</h3>
+
+<p>Nesse tutorial iremos aprender a criar um jogo simples de pong usando uma biblioteca de realidade aumentada tracking.js, portanto, baixe a mesma no link: “<a href="http://trackingjs.com/%E2%80%9D">http://trackingjs.com/”</a> para que possamos  criar o game
+Primeiro iremos criar o documento HTML</p>
+
+<pre><code>&lt;!doctype html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;title&gt;Pong Gesture&lt;/title&gt;
+&lt;!--SUBSTITUA AQUI O LOCAL ONDE VOCÊ COLOCOU AS BIBLITECAS DO TRACKING.JS--&gt;
+    &lt;script src="../js/build/tracking-min.js"&gt;&lt;/script&gt;
+    &lt;script src="../../dat-gui/build/dat.gui.min.js"&gt;&lt;/script&gt;
+    &lt;script src="../js/assets/stats.min.js"&gt;&lt;/script&gt;
+    &lt;script src="../js/assets/color_camera_gui.js"&gt;&lt;/script&gt;
+    &lt;!-- Basic styling, centering the canvas --&gt;    
+    &lt;style&gt;
+    canvas {
+        display: block;
+        position: absolute;
+        margin: auto;
+     top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+    }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div&gt;
+        &lt;div&gt;
+            &lt;video id="video" width="300" height="225" preload autoplay loop muted controls&gt;&lt;/video&gt;
+            &lt;canvas id="canvas" width="300" height="225"&gt;&lt;/canvas&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;script&gt;
+</code></pre>
+
+<p>Mas, vamos agora aprender um pouco de javascript.
+Primeiro, vamos definir nosso campo onde irá acontecer as disputas de pong. Para isso, vamos definir os limites da nossa tela e guarda-los em duas variáveis, vamos chama-las respectivamente de Largura e Altura. Para capturar a largura vamos usar o comando window.innerWidth e guardá-lo na variável Largura e o para capturar a altura vamos usar o comando window.innerHeight e guardá-lo na variável ALTURA. Ficando com o código dessa maneira:</p>
+
+<pre><code>var
+    LARGURA  = window.innerWidth,
+    ALTURA = window.innerHeight,
+    canvas,
+    ctx
+</code></pre>
+
+<p>Agora, vamos definir a função principal do nosso projeto que será a nossa main, que será responsável por fazer a chamada de todas as  outras funções.</p>
+
+<pre><code>function main() {
+}
+</code></pre>
+
+<p>Agora com nossas variáveis com o tamanho da tela definidas vamos usar o comando createElement("canvas ") para criar imagens por código. E criaremos uma variável ctx (abreviação de contexto) usando o comando canvas.getContext("2D " ) para informar que esse elemento irá ser 2D (sim, o canvas pode criar elementos 3D!) e para não precisarmos ficar digitando toda hora canvas.getContext("2D").alguma_coisa. Essa variável será responsável por desenhar todos os elementos do jogo, como as paletas, campo e a bola. Por fim iremos adicionar essa variável ao corpo do nosso documento HTML com o comando document.body.appendChild(canvas). Então nosso código ficará dessa forma:</p>
+
+<pre><code>function main(){
+canvas = document.createElement("canvas")
+canvas.width = LARGURA
+canvas.height = ALTURA
+ctx = canvas.getContext("2d");
+document.body.appendChild(canvas);
+}
+</code></pre>
+
+<p>Vamos criar uma função responsável por fazer todos os desenhos, vamos chama-la de “desenhar”.</p>
+
+<pre><code>    function desenhar() {
+
+        //Desenhando o retângulo na tela a partir da posição x = 0, y = 0  do tamanho dos limites da minha tela (que eu havia capturado anteriormente na variável)
+        ctx.fillRect(0, 0, LARGURA, ALTURA);
+        //entender melhor como funciona essa bagaça...
+        ctx.save();
+        //definindo a cor dos meus elementos em hexa decimal, sendo fff = branco.  E cada caracter é respectivamente responsável pela cor Vermelho, Verde e Azul.
+        ctx.fillStyle = "#fff";
+   }
+</code></pre>
+
+<p>Agora vamos fazer a linha que delimita os lados dos jogadores. Então, dentro da função “desenhar”  coloque:</p>
+
+<pre><code>        //Definindo uma variável para dizer qual o tamanho da largura da linha
+        var larguraLinha = 4;
+        //Definindo outra variável para dizer qual será a posição X da linha, que no caso, como eu quero colocar no meio do campo, seria a “largura do campo” menos a “largura da linha” divido por 2
+        var x = (LARGURA - larguraLinha) / 2;
+        //Definindo outra variável para dizer a posição Y a partir de onde será desenhado o tracejado
+        var y = 0;
+        //aqui estamos definindo outra variável para dizer qual será a distância entre um traço e outro
+        var passo = ALTURA/20;
+            //"x" define a posição X do retângulo, y diz a posição Y do retângulo, estamos somando com passo / 4 pois queremos que ele fique no começo da tela com um espaço de 1/4 sem estar pintado. A "larguraLinha" diz a largura do retângulo, e o passo / 2 é que queremos que o tamanho vertical dele sejá igual a metade (1/2) do passo.
+            ctx.fillRect(x, larguraLinha + passo / 4, larguraLinha, passo / 2);
+            y += passo;
+        }
+        //entender melhor como funciona essa bagaçahttps://github.com/lucasRogerioOliveira/pong-gesture/generated_pages/new#...
+        ctx.restore();
+}
+</code></pre>
+
+<p>Se tudo até agora deu certo o resultado esperado deve ser isso:</p>
+
+<h3>
+<a name="imagem-1" class="anchor" href="#imagem-1"><span class="octicon octicon-link"></span></a>imagem 1</h3>
+
+<p>Agora com nosso campo feito, vamos partir para a criação das paletas, que serão o que cada jogador irá controlar.
+Então, vamos criar um objeto, em javascript chamado Jogador. Onde o jogador irá conter, uma posição X e Y inicial, uma pontuação, e irá precisar de uma cor para que possa se mover. Vamos criar também mais duas variáveis para que caso tamanho do monitor seja diferente as paletas (jogadores) consigam se adaptar ao tamanho, e não fique desproporcional, e uma última para queposamos definir a posição Y inicial dos jogadores. Então, mãos na massa!</p>
+
+<pre><code>   var
+    LARGURA  = window.innerWidth,
+    ALTURA = window.innerHeight,
+    LARGURA_JOGADOR = LARGURA / 100,
+    ALTURA_JOGADOR = ALTURA / 6,
+    POS_INI_Y = (ALTURA - ALTURA_JOGADOR) / 2,
+    canvas,
+    ctx,
+
+    //Criação do objeto player. Onde respectivamente os parâmetros são referentes a posição X, Y, posição X de onde ficará o valores da pontuação, e a cor para que ele possa se mover na tela.
+    Jogador = function(X, Y, pX, corParaMover){
+            return {
+            x: X,
+            y: Y,
+            pontos: 0,
+            cor: corParaMover,
+            largura:  20,
+            altura: 100,
+
+            //método responsável para atualizar a posição Y da paleta conforme o jogador move a cor.
+            atualizar: function() {
+                //define limites para que o meu jogador não saia dos limites da tela
+                this.y = Math.max(Math.min(this.y, HEIGHT - this.altura), 0);
+            },
+            //método responsável por atualizar o desenho da paleta conforme o jogador move a cor.
+            desenhar: function() {
+                //desenha a paleta com os parâmetros passados
+                ctx.fillRect(this.x, this.y, this.largura, this.altura);
+                //define a fonte que será usada para escrever a pontuação do jogador
+                ctx.font = "26px Helvetica";
+                //define o que será escrito na tela, e qual será a posição X e depois a Y
+                ctx.fillText(this.pontos, pX, 20);
+            }           
+            };
+    };
+</code></pre>
+
+<p>Com nossa classe criada, coloque logo após ela a criação dos objetos, já que iremos usá-los logo:</p>
+
+<pre><code>jogador1 = new Jogador(0, POS_INI_Y, LARGURA  / 2 - 35, 'magenta');
+jogador2 = new Jogador(LARGURA - LARGURA_JOGADOR, POS_INI_Y, LARGURA  / 2 + 20, 'cyan');
+</code></pre>
+
+<p>Precisamos colocar também a chamada para desenhar os jogadores no campo na nossa função “desenhar”, então para isso adicione em um local antes do “restore()”:</p>
+
+<pre><code>jogador1.desenhar();
+jogador2.desenhar();
+</code></pre>
+
+<p>Agora, vamos fazer os nossos jogadores se moverem, para isso, vamos começar a usar a biblioteca jasvascript “trackin.js” e colocaremos logo após nosso jogador player a seguinte chamada:</p>
+
+<pre><code>    //pegando o elemento pelo "id"
+    var video = document.getElementById('video');
+    //definindo a variavel para trabalhar com a realidade aumentada, e definindo as cores que a câmera irá procurar
+    var tracker = new tracking.ColorTracker([player.cor, player2.cor]); 
+    //pegando a tag "video" que possui o ID = video, e liga a câmera
+    tracking.track('#video', tracker, {
+        camera: true
+    });
+    //pegando a var. "track" e falando ligado a ela, o programa fará...
+    tracker.on('track', function(event) {
+        //fazendo um for para cada retângulo referente as cores que a biblioteca encontrar
+        event.data.forEach(function(rect) {
+            //se a cor for igual a cor do jogador 1 ele irá posicionar a paleta (jogador) conforme o jogador(humano) mover a cor.
+         if (rect.color === jogador1.cor)
+                jogador1.y = rect.y * 2.7;
+            if (rect.color === jogador2.cor){
+                jogador2.y = rect.y * 2.7;
+           }
+        });
+    });
+</code></pre>
+
+<p>Note que ele irá pedir autorização para capturar a sua câmera:</p>
+
+<h3>
+<a name="imagem-2" class="anchor" href="#imagem-2"><span class="octicon octicon-link"></span></a>imagem 2</h3>
+
+<p>E se tudo deu certo, o seu jogo deve estar dessa maneira:</p>
+
+<h3>
+<a name="imagem-3" class="anchor" href="#imagem-3"><span class="octicon octicon-link"></span></a>imagem 3</h3>
+
+<p>Porém, note que mesmo que você faça os movimentos com a cor nenhuma paleta se move. Isso se deve pois, a tela precisa ser “repintada, para isso, precisamos implementar mais um trecho de código na nossa função principal (main):</p>
+
+<pre><code>        var repintar = function() {
+            atualizar();
+            desenhar();
+            window.requestAnimationFrame(repintar, canvas);
+        };
+        window.requestAnimationFrame(repintar, canvas);
+</code></pre>
+
+<p>Agora sim, as paletas devem estar se movendo conforme o esperado:</p>
+
+<h3>
+<a name="imagem-4" class="anchor" href="#imagem-4"><span class="octicon octicon-link"></span></a>imagem 4</h3>
+
+<p>Mas, ainda falta algo essencial, a bola! Vamos então, criar uma bola que possua o atributo diâmetro.  Vamos por enquanto apenas criar uma variável informando o diâmetro da bola, e também um método “desenhar” para que possamos enxergar se nossa bola está sendo desenhada na tela ou não, para isso digite logo após a criação dos jogadores:</p>
+
+<pre><code>    //esse if ternário, irá servir para que se a tela do usuário for muito pequena, a bola não fique tão pequena também, facilitando a jogabilidade e a diversão.
+    DIAMETRO_BOLA = window.innerWidth / (window.innerWidth &lt; 600 ? 30 : 70),
+    Bola = function(Diametro){
+        return {
+            x: null,
+            y: null,
+            diametro: Diametro,
+            velocidade: null,
+            desenhar: function() {
+             ctx.fillRect(this.x, this.y, this.diametro, this.diametro);
+            }
+        };
+    }
+bola = new Bola(DIAMETRO_BOLA);
+</code></pre>
+
+<p>E na função principal “desenhar” chame a função desenhar do objeto “bola”:</p>
+
+<pre><code>bola.desenhar();
+</code></pre>
+
+<p>Se tudo deu certo o nosso jogo deve estar assim:</p>
+
+<h3>
+<a name="imagem-5" class="anchor" href="#imagem-5"><span class="octicon octicon-link"></span></a>imagem 5</h3>
+
+<p>Vamos criar um método “configuracoes” onde irá informar a posição Y que a bola irá começar, direção para que ela irá, ângulo e afins, para isso crie uma variável dentro da classe “Bola” chamada de “lado”, onde ela vai ser 1 para ir para a direita e -1 para ir para a esquerda (imagine isso como um plano cartesiano).</p>
+
+<pre><code>            lado: 1,
+            configurar: function(lado) {
+                // sorteando uma posição aleatória para criar a nossa bola para colocar na posição Y
+                var r = Math.random();
+                this.x = lado === 1 ? jogador1.x + jogador1.largura : jogador2.x - this.diametro;
+                this.y = (ALTURA - this.diametro) * r;
+                // calcular o ângulo, maior ângulo / inferior no eixo-y mais íngreme
+                var phi = 0.1 * Math.PI * (1 - 2 * r);
+                // calculando a velocidade que a bola irá se mover
+                this.vel = {
+                    x: lado * this.velocidade * Math.cos(phi),
+                    y: this.velocidade * Math.sin(phi)
+               }
+            },
+</code></pre>
+
+<p>E na função principal (main) chame o método “configurar(1)”:</p>
+
+<pre><code>bola.configurar(1);
+</code></pre>
+
+<p>Agora, precisamos fazer a nossa bola se movimentar, então vamos criar mais um método “atualizar” que será responsável por isso e detectar as colisões:</p>
+
+<pre><code>            atualizar: function() {
+                // atualiza a posição com a velocidade atual
+                this.x += this.vel.x;
+                this.y += this.vel.y;
+                //checando se  sai dos limites da tela na posição Y
+                if (0 &gt; this.y || this.y + this.diametro &gt; ALTURA) {
+                    // calculate and add the right offset, i.e. how far
+                    // inside of the canvas the ball is
+                    var offset = this.vel.y &lt; 0 ? 0 - this.y : ALTURA - (this.y + this.diametro);
+                    this.y += 2 * offset;
+                    // mirror the y velocity
+                    this.vel.y *= -1;
+                }
+                // helper function to check intesectiont between two
+                // axis aligned bounding boxex (AABB)
+                var AABBIntersect = function(ax, ay, aw, ah, bx, by, bw, bh) {
+                    return ax &lt; bx+bw &amp;&amp; ay &lt; by+bh &amp;&amp; bx &lt; ax+aw &amp;&amp; by &lt; ay+ah;
+                };
+                // detectando colisão
+                var pdle = this.vel.x &lt; 0 ? jogador1 : jogador2;
+                if (AABBIntersect(pdle.x, pdle.y, pdle.largura, pdle.altura,
+                        this.x, this.y, this.diametro, this.diametro)
+                ) {
+                    // set the x position and calculate reflection angle
+                    this.x = pdle === jogador1 ? jogador1.x + jogador1.largura : jogador2.x - this.diametro;
+                    var n = (this.y + this.diametro - pdle.y) / (pdle.altura + this.diametro);
+                    var phi = 0.25 * Math.PI * (2 * n - 1); // pi/4 = 45
+                    // calculate smash value and update velocity
+                    var batida = Math.abs(phi) &gt; 0.2 * Math.PI ? 1.5 : 1;
+                    this.vel.x = batida * (pdle === jogador1 ? 1 : -1) * this.velocidade * Math.cos(phi);
+                    this.vel.y = batida * this.velocidade * Math.sin(phi);
+                }
+                // coloca a bola novamente no campo na posição X que ela saiu.
+                if (0 &gt; this.x + this.diametro || this.x &gt; LARGURA) {
+                    if (pdle === jogador1)
+                        jogador2.pontos += 1;
+                    else
+                        jogador1.pontos += 1;
+                    this.configurar(pdle === jogador1 ? 1 : -1);
+                }
+            },
+</code></pre>
+
+<p>Ufa! Faça a chamada do método “configurar” do objeto “bola” criado, e a função “atualizar” na função principal “atualizar”.
+A função main no final das contas estará dessa forma:</p>
+
+<pre><code>    function main(){
+        canvas = document.createElement("canvas");
+        canvas.width = LARGURA;
+        canvas.height = ALTURA;
+        ctx = canvas.getContext("2d");
+        document.body.appendChild(canvas);
+        bola.configurar(1);
+        var repintar = function() {
+            atualizar();
+            desenhar();
+            window.requestAnimationFrame(repintar, canvas);
+        };
+        window.requestAnimationFrame(repintar, canvas);
+    }
+</code></pre>
+
+<p>E a função atualizar estará assim:</p>
+
+<pre><code>    function atualizar() {
+        bola.atualizar();
+        jogador1.atualizar();
+        jogador2.atualizar();
+    }
+</code></pre>
+
+<p>Pronto! O resultado esperado do game deve ser semelhante a esse:</p>
+
+<h3>
+<a name="imagem-final" class="anchor" href="#imagem-final"><span class="octicon octicon-link"></span></a>imagem final</h3>
+
+<h3>
 <a name="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages"><span class="octicon octicon-link"></span></a>Welcome to GitHub Pages.</h3>
 
 <p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:</p>
 
-<pre><code>$ cd your_repo_root/repo_name
-$ git fetch origin
-$ git checkout gh-pages
+<pre><code> cd your_repo_root/repo_name
+ git fetch origin
+ git checkout gh-pages
 </code></pre>
 
 <p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
@@ -72,7 +408,7 @@ $ git checkout gh-pages
     </div>
     <footer>
       <div class="owner">
-      <p><a href="https://github.com/lucAlucard" class="avatar"><img src="https://avatars1.githubusercontent.com/u/4267927?v=2&amp;s=60" width="48" height="48"></a> <a href="https://github.com/lucAlucard">lucAlucard</a> maintains <a href="https://github.com/lucAlucard/pong-gesture">Pong-gesture</a></p>
+      <p><a href="https://github.com/lucasRogerioOliveira" class="avatar"><img src="https://avatars1.githubusercontent.com/u/4267927?v=2&amp;s=60" width="48" height="48"></a> <a href="https://github.com/lucasRogerioOliveira">lucasRogerioOliveira</a> maintains <a href="https://github.com/lucasRogerioOliveira/pong-gesture">Pong-gesture</a></p>
 
 
       </div>
@@ -83,7 +419,7 @@ $ git checkout gh-pages
   </div>
   <div class="current-section">
     <a href="#top">Scroll to top</a>
-    <a href="https://github.com/lucAlucard/pong-gesture/tarball/master" class="tar">tar</a><a href="https://github.com/lucAlucard/pong-gesture/zipball/master" class="zip">zip</a><a href="" class="code">source code</a>
+    <a href="https://github.com/lucasRogerioOliveira/pong-gesture/tarball/master" class="tar">tar</a><a href="https://github.com/lucasRogerioOliveira/pong-gesture/zipball/master" class="zip">zip</a><a href="" class="code">source code</a>
     <p class="name"></p>
   </div>
 
