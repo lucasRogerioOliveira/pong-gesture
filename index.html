@@ -61,7 +61,7 @@ Primeiro iremos criar o documento HTML</p>
         display: block;
         position: absolute;
         margin: auto;
-     top: 0;
+        top: 0;
         bottom: 0;
         left: 0;
         right: 0;
@@ -128,13 +128,13 @@ Primeiro, vamos definir nosso campo onde irá acontecer as disputas de pong. Par
         var y = 0;
         //aqui estamos definindo outra variável para dizer qual será a distância entre um traço e outro
         var passo = ALTURA/20;
+        while (y &lt; ALTURA) {
             //"x" define a posição X do retângulo, y diz a posição Y do retângulo, estamos somando com passo / 4 pois queremos que ele fique no começo da tela com um espaço de 1/4 sem estar pintado. A "larguraLinha" diz a largura do retângulo, e o passo / 2 é que queremos que o tamanho vertical dele seja igual a metade (1/2) do passo.
             ctx.fillRect(x, larguraLinha + passo / 4, larguraLinha, passo / 2);
             y += passo;
         }
-        //entender melhor como funciona essa bagaçahttps://github.com/lucasRogerioOliveira/pong-gesture/generated_pages/new#...
+        //entender melhor como funciona essa cara
         ctx.restore();
-}
 </code></pre>
 
 <p>Se tudo até agora deu certo o resultado esperado deve ser isso:</p>
@@ -195,10 +195,10 @@ jogador2.desenhar();
 
 <p>Agora, vamos fazer os nossos jogadores se moverem, para isso, vamos começar a usar a biblioteca jasvascript “trackin.js” e colocaremos logo após nosso jogador player a seguinte chamada:</p>
 
-<pre><code>    //pegando o elemento pelo "id"
+<pre><code>     //pegando o elemento pelo "id"
     var video = document.getElementById('video');
     //definindo a variavel para trabalhar com a realidade aumentada, e definindo as cores que a câmera irá procurar
-    var tracker = new tracking.ColorTracker([player.cor, player2.cor]); 
+    var tracker = new tracking.ColorTracker([player.cor, player2.cor]);    
     //pegando a tag "video" que possui o ID = video, e liga a câmera
     tracking.track('#video', tracker, {
         camera: true
@@ -208,11 +208,11 @@ jogador2.desenhar();
         //fazendo um for para cada retângulo referente as cores que a biblioteca encontrar
         event.data.forEach(function(rect) {
             //se a cor for igual a cor do jogador 1 ele irá posicionar a paleta (jogador) conforme o jogador(humano) mover a cor.
-         if (rect.color === jogador1.cor)
+           if (rect.color === jogador1.cor)
                 jogador1.y = rect.y * 2.7;
             if (rect.color === jogador2.cor){
                 jogador2.y = rect.y * 2.7;
-           }
+            }
         });
     });
 </code></pre>
@@ -250,7 +250,7 @@ jogador2.desenhar();
             diametro: Diametro,
             velocidade: null,
             desenhar: function() {
-             ctx.fillRect(this.x, this.y, this.diametro, this.diametro);
+                ctx.fillRect(this.x, this.y, this.diametro, this.diametro);
             }
         };
     }
@@ -280,7 +280,7 @@ bola = new Bola(DIAMETRO_BOLA);
                 this.vel = {
                     x: lado * this.velocidade * Math.cos(phi),
                     y: this.velocidade * Math.sin(phi)
-               }
+                }
             },
 </code></pre>
 
