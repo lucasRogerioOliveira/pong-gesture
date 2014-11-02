@@ -7,7 +7,8 @@
     <script src="../js/build/tracking-min.js"></script>
     <script src="../../dat-gui/build/dat.gui.min.js"></script>
     <script src="../js/assets/stats.min.js"></script>
-    <script src="../js/assets/color_camera_gui.js"></script>
+	<script src="../js/assets/color_camera_gui.js"></script>
+	<script src="../js/build/data/face-min.js"></script>
 
     <!-- Basic styling, centering the canvas -->    
     <style>
@@ -25,8 +26,8 @@
 <body>
     <div>
         <div>
-            <video id="video" width="300" height="225" preload autoplay loop muted controls></video>
-            <canvas id="canvas" width="300" height="225"></canvas>
+            <video id="video" width="150" height="112" preload autoplay loop muted controls></video>
+            <canvas id="canvas" width="150" height="112"></canvas>
         </div>
     </div>
 
@@ -40,10 +41,40 @@
     ALTURA_JOGADOR = ALTURA / 6,
     POS_INI_Y = (ALTURA - ALTURA_JOGADOR) / 2,
     DIAMETRO_BOLA = window.innerWidth / (window.innerWidth < 600 ? 30 : 70),
+    FACE = true,
     canvas,
     ctx,
+	
+	ai = {
+		x: null,
+		y: null,
+		score: 0, 
+		width:  20,
+		height: 100,
 
-    
+		/**
+		 * Update the position depending on the ball position
+		 */
+		update: function() {
+			// calculate ideal position
+			var desty = ball.y - (this.height - ball.side)*0.5;
+			// ease the movement towards the ideal position
+			this.y += (desty - this.y) * 0.1;
+			// keep the paddle inside of the canvas
+			this.y = Math.max(Math.min(this.y, HEIGHT - this.height), 0);
+		},
+
+		/**
+		 * Draw the ai paddle to the canvas
+		 */
+		draw: function() {
+			ctx.fillRect(this.x, this.y, this.width, this.height);
+			ctx.font = "26px Helvetica";
+			ctx.fillText(this.score, WIDTH  / 2 + 20, 20);
+		}
+	},
+	
+
     //Criação do objeto Jogador. Onde respectivamente os parâmetros são referentes a posição X, Y, posição X de onde ficará o valores da pontuação, e a cor para que ele possa se mover na tela.
     Jogador = function(X, Y, pX, corParaMover){
         return {
@@ -72,31 +103,40 @@
         };
     };
 
-    jogador1 = new Jogador(0, POS_INI_Y, LARGURA  / 2 - 35, 'magenta');
+    jogador1 = new Jogador(0, POS_INI_Y, LARGURA  / 2 - 35, 'yellow');
     jogador2 = new Jogador(LARGURA - LARGURA_JOGADOR, POS_INI_Y, LARGURA  / 2 + 20, 'cyan');
 
+	window.onload = function() {
+		//pegando o elemento pelo "id"
+		var video = document.getElementById('video');
 
-    //pegando o elemento pelo "id"
-    var video = document.getElementById('video');
+		//definindo a variavel para trabalhar com a realidade aumentada, e definindo as cores que a câmera irá procurar
+		
+		if (!FACE) {
+			var tracker = new tracking.ColorTracker([jogador1.cor, jogador2.cor]);
+		} else {
+			var tracker = new tracking.ObjectTracker('face');
+		}
 
-    //definindo a variavel para trabalhar com a realidade aumentada, e definindo as cores que a câmera irá procurar
-    var tracker = new tracking.ColorTracker([jogador1.cor, jogador2.cor]);    
+		//pegando a tag "video" que possui o ID = video, e liga a cãmera
+		tracking.track('#video', tracker, {camera: true});
 
-    //pegando a tag "video" que possui o ID = video, e liga a cãmera
-    tracking.track('#video', tracker, {camera: true});
-
-    //pegando a var. "track" e falando ligado a ela, o programa fará...
-    tracker.on('track', function(event){
-        //fazendo um for para cada retângulo referente as cores que a biblioteca encontrar
-        event.data.forEach(function(rect){
-            //se a cor for igual a cor do jogador 1 ele irá posicionar a paleta (jogador) conforme o jogador(humano) mover a cor.
-            if (rect.color === jogador1.cor){
-                jogador1.y = rect.y * 2.7;
-            } if (rect.color === jogador2.cor){
-                jogador2.y = rect.y * 2.7;
-            }
-        });
-    }); 
+		//pegando a var. "track" e falando ligado a ela, o programa fará...
+		tracker.on('track', function(event){
+			//fazendo um for para cada retângulo referente as cores que a biblioteca encontrar
+			event.data.forEach(function(rect){
+				if (FACE){
+					jogador1.y = rect.x * 4.7;				
+				} else if (rect.color === jogador1.cor){
+					//se a cor for igual a cor do jogador 1 ele irá posicionar a paleta (jogador) conforme o jogador(humano) mover a cor.
+					jogador1.y = rect.y * 2.7;
+				} if (rect.color === jogador2.cor){
+					jogador2.y = rect.y * 2.7;
+				}
+				console.log(rect.x);
+			});
+		});
+	};
 
     //objeto bola com a posição X e a posição Y inicial, Velocidade e a diametro
     Bola = function(Diametro){
@@ -225,11 +265,12 @@
 
         //entender melhor como funciona essa bagaça...
         ctx.restore();
+        //createAndSendDocument();        
     }
 
     main();
 
 
     </script>
-</boyd>
+</body>
 </html>

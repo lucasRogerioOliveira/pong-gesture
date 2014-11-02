@@ -8,6 +8,7 @@
 	<script src="../../dat-gui/build/dat.gui.min.js"></script>
 	<script src="../js/assets/stats.min.js"></script>
 	<script src="../js/assets/color_camera_gui.js"></script>
+	<script src="../js/build/data/face-min.js"></script>
 
 	<!-- Basic styling, centering the canvas -->	
 	<style>
@@ -23,10 +24,10 @@
 	</style>
 </head>
 <body>
-	<div>
+	<div>	
 		<div>
-	    	<video id="video" width="300" height="225" preload autoplay loop muted controls></video>
-		    <canvas id="canvas" width="300" height="225"></canvas>
+	    	<video id="video" width="150" height="112" preload autoplay loop muted controls></video>
+		    <canvas id="canvas" width="150" height="112"></canvas>
 		</div>
 	</div>
 
@@ -41,7 +42,7 @@
 	 */
 	WIDTH  = window.innerWidth,
 	HEIGHT = window.innerHeight,
-
+	WIDTH_PERC = WIDTH / HEIGHT,
 	pi = Math.PI,
 
 	UpArrow   = 38,
@@ -53,7 +54,8 @@
 	canvas,
 	ctx,
 	keystate,
-	versus = true,
+	versus = false,
+	FACE = true,
 
 	/**
 	 * The player paddle
@@ -96,22 +98,29 @@
       	var video = document.getElementById('video');
       	if (versus && withCam)
       		var tracker = new tracking.ColorTracker([player.color, player2.color]);	
-      	if (!versus && withCam)
-      		var tracker = new tracking.ColorTracker([player.color]);
-      
+      	if (!versus && withCam) {
+      		if (!FACE){
+				var tracker = new tracking.ColorTracker([player.color]);	
+			} else {
+				var tracker = new tracking.ObjectTracker('face');
+			}
+      	}
+        console.log('a');
 	    tracking.track('#video', tracker, { camera: true });
-
       	tracker.on('track', function(event) {
         	event.data.forEach(function(rect) {
-          		if (rect.color === player.color)
-          			player.y = rect.y * 2.7;
+        		if (FACE){
+        			player.y = rect.x * 4.7;
+        		} else if (rect.color === player.color)
+          				player.y = rect.x * 2.7;
           		if (versus){
           			if (rect.color === player2.color){
           				player2.y = rect.y * 2.7;
           			}
-
           		}
+          		console.log('rect', rect.x);
 	        });
+
       	});
      	//initGUIControllers(tracker);
     };
@@ -264,18 +273,39 @@
 	/**
 	 * Starts the game
 	 */
+/*
+	 document.addEventListener('DOMContentLoaded', function(){
+		var v = document.getElementById('video');
+		var c = document.getElementById('canvas');
+		var context = canvas.getContext('2d');
+
+		var cw = Math.floor(canvas.clientWidth / 100);
+	    var ch = Math.floor(canvas.clientHeight / 100);
+	    canvas.width = cw;
+	    canvas.height = ch;
+
+		v.addEventListener('play', function(){
+			draw(this, context, cw, ch);
+		}, false);
+	}, false);
+
+	function draw(v,c,w,h) {
+	    if(v.paused || v.ended) return false;
+	    c.drawImage(v,0,0,w,h);
+	    setTimeout(draw,20,v,c,w,h);
+	}
+*/
+
 	function main() {
 		// create, initiate and append game canvas
-		canvas = document.createElement("canvas");
+		canvas = document.createElement('canvas');
 		canvas.width = WIDTH;
 		canvas.height = HEIGHT;
-		ctx = canvas.getContext("2d");
-		text = canvas.getContext("2d");
+		ctx = canvas.getContext('2d');
 		document.body.appendChild(canvas);
 
 		player = new Player(null, null, UpArrow, DownArrow, WIDTH  / 2 - 35, 'magenta');
 		player2 = new Player(null, null, 87	, 83, WIDTH  / 2 + 20, 'cyan'); //keyUp = w and key down = s and it is not sensitive key
-
 
 		keystate = {};
 		// keep track of keyboard presses
@@ -362,7 +392,6 @@
 
 	// start and run the game
 	main();
-
 
 	</script>
 </body>
