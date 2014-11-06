@@ -4,78 +4,74 @@
     <meta charset="UTF-8">
     <title>Pong Gesture</title>
 
-    <script src="../js/build/tracking-min.js"></script>
-    <script src="../../dat-gui/build/dat.gui.min.js"></script>
-    <script src="../js/assets/stats.min.js"></script>
-	<script src="../js/assets/color_camera_gui.js"></script>
-	<script src="../js/build/data/face-min.js"></script>
+    <script src="../js/hammer.min.js"></script>
 
     <!-- Basic styling, centering the canvas -->    
     <style>
-    canvas {
-        display: block;
-        position: absolute;
-        margin: auto;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-    }
+	html, body {
+		overflow: hidden;
+		margin: 0;
+	}
+		
+	#hit {
+		position: absolute;
+	}
     </style>
 </head>
 <body>
     <div>
         <div>
-            <video id="video" width="150" height="112" preload autoplay loop muted controls></video>
-            <canvas id="canvas" width="150" height="112"></canvas>
+            <div id="hit" style="background: #42d692; width: 150px; height: 150px;">
+				<canvas id="canvas" width="150" height="112"></canvas>
+			</div>
         </div>
     </div>
 
     <script>
-
+		
     var
 
     LARGURA  = window.innerWidth,
     ALTURA   = window.innerHeight,
-    LARGURA_JOGADOR = LARGURA / 100,
+    LARGURA_JOGADOR = LARGURA / 70,
     ALTURA_JOGADOR = ALTURA / 6,
     POS_INI_Y = (ALTURA - ALTURA_JOGADOR) / 2,
     DIAMETRO_BOLA = window.innerWidth / (window.innerWidth < 600 ? 30 : 70),
-    FACE = true,
     canvas,
     ctx,
 	
 	ai = {
-		x: null,
+		x: LARGURA - LARGURA_JOGADOR,
 		y: null,
-		score: 0, 
-		width:  20,
-		height: 100,
+		pontos: 0, 
+		largura:  LARGURA_JOGADOR,
+		altura: ALTURA_JOGADOR,
 
 		/**
 		 * Update the position depending on the ball position
 		 */
-		update: function() {
+		atualizar: function() {
 			// calculate ideal position
-			var desty = ball.y - (this.height - ball.side)*0.5;
+			var desty = bola.y - (this.altura - bola.diametro) * 0.5;
 			// ease the movement towards the ideal position
 			this.y += (desty - this.y) * 0.1;
 			// keep the paddle inside of the canvas
-			this.y = Math.max(Math.min(this.y, HEIGHT - this.height), 0);
+			this.y = Math.max(Math.min(this.y, ALTURA - this.altura), 0);
 		},
 
 		/**
 		 * Draw the ai paddle to the canvas
 		 */
-		draw: function() {
-			ctx.fillRect(this.x, this.y, this.width, this.height);
+		desenhar: function() {
+			ctx.fillRect(this.x, this.y, this.largura, this.altura);
+			ctx.fillRect(this.x, this.y, this.largura, this.altura);
 			ctx.font = "26px Helvetica";
-			ctx.fillText(this.score, WIDTH  / 2 + 20, 20);
+			ctx.fillText(this.pontos, LARGURA  / 2 + 20, 20);
 		}
 	},
 	
 
-    //Cria√ß√£o do objeto Jogador. Onde respectivamente os par√¢metros s√£o referentes a posi√ß√£o X, Y, posi√ß√£o X de onde ficar√° o valores da pontua√ß√£o, e a cor para que ele possa se mover na tela.
+    //CriaÁ„o do objeto Jogador. Onde respectivamente os par‚metros s„o referentes a posiÁ„o X, Y, posiÁ„o X de onde ficar· o valores da pontuaÁ„o, e a cor para que ele possa se mover na tela.
     Jogador = function(X, Y, pX, corParaMover){
         return {
             x: X,
@@ -85,60 +81,28 @@
             largura:  LARGURA_JOGADOR,
             altura: ALTURA_JOGADOR,
 
-            //m√©todo respons√°vel para atualizar a posi√ß√£o Y da paleta conforme o jogador move a cor.
+            //mÈtodo respons·vel para atualizar a posiÁ„o Y da paleta conforme o jogador move a cor.
             atualizar: function() {
-                //define limites para que o meu jogador n√£o saia dos limites da tela
+                //define limites para que o meu jogador n„o saia dos limites da tela
                 this.y = Math.max(Math.min(this.y, ALTURA - this.altura), 0);
             },
 
-            //m√©todo respons√°vel por atualizar o desenho da paleta conforme o jogador move a cor.
+            //mÈtodo respons·vel por atualizar o desenho da paleta conforme o jogador move a cor.
             desenhar: function() {
-                //desenha a paleta com os par√¢metros passados
+                //desenha a paleta com os par‚metros passados
                 ctx.fillRect(this.x, this.y, this.largura, this.altura);
-                //define a fonte que ser√° usada para escrever a pontua√ß√£o do jogador
+                //define a fonte que ser· usada para escrever a pontuaÁ„o do jogador
                 ctx.font = "26px Helvetica";
-                //define o que ser√° escrito na tela, e qual ser√° a posi√ß√£o X e depois a Y
+                //define o que ser· escrito na tela, e qual ser· a posiÁ„o X e depois a Y
                 ctx.fillText(this.pontos, pX, 20);
             }           
         };
     };
-
+	
     jogador1 = new Jogador(0, POS_INI_Y, LARGURA  / 2 - 35, 'yellow');
-    jogador2 = new Jogador(LARGURA - LARGURA_JOGADOR, POS_INI_Y, LARGURA  / 2 + 20, 'cyan');
 
-	window.onload = function() {
-		//pegando o elemento pelo "id"
-		var video = document.getElementById('video');
 
-		//definindo a variavel para trabalhar com a realidade aumentada, e definindo as cores que a c√¢mera ir√° procurar
-		
-		if (!FACE) {
-			var tracker = new tracking.ColorTracker([jogador1.cor, jogador2.cor]);
-		} else {
-			var tracker = new tracking.ObjectTracker('face');
-		}
-
-		//pegando a tag "video" que possui o ID = video, e liga a c√£mera
-		tracking.track('#video', tracker, {camera: true});
-
-		//pegando a var. "track" e falando ligado a ela, o programa far√°...
-		tracker.on('track', function(event){
-			//fazendo um for para cada ret√¢ngulo referente as cores que a biblioteca encontrar
-			event.data.forEach(function(rect){
-				if (FACE){
-					jogador1.y = rect.x * 4.7;				
-				} else if (rect.color === jogador1.cor){
-					//se a cor for igual a cor do jogador 1 ele ir√° posicionar a paleta (jogador) conforme o jogador(humano) mover a cor.
-					jogador1.y = rect.y * 2.7;
-				} if (rect.color === jogador2.cor){
-					jogador2.y = rect.y * 2.7;
-				}
-				console.log(rect.x);
-			});
-		});
-	};
-
-    //objeto bola com a posi√ß√£o X e a posi√ß√£o Y inicial, Velocidade e a diametro
+    //objeto bola com a posiÁ„o X e a posiÁ„o Y inicial, Velocidade e a diametro
     Bola = function(Diametro){
         return {
             x: 0,
@@ -148,13 +112,13 @@
             velocidade: 12,
 
             configurar: function(lado) {
-                // sorteando uma posi√ß√£o aleat√≥ria para criar a nossa bola para colocar na posi√ß√£o Y
+                // sorteando uma posiÁ„o aleatÛria para criar a nossa bola para colocar na posiÁ„o Y
                 var r = Math.random();
-                this.x = lado === 1 ? jogador1.x + jogador1.largura : jogador2.x - this.diametro;
+                this.x = lado === 1 ? jogador1.x + jogador1.largura : ai.x - this.diametro;
                 this.y = (ALTURA - this.diametro) * r;
-                // calcular o √¢ngulo, maior √¢ngulo / inferior no eixo-y mais √≠ngreme
+                // calcular o ‚ngulo, maior ‚ngulo / inferior no eixo-y mais Ìngreme
                 var phi = 0.1 * Math.PI * (1 - 2 * r);
-                // calculando a velocidade que a bola ir√° se mover
+                // calculando a velocidade que a bola ir· se mover
                 this.vel = {
                     x: lado * this.velocidade * Math.cos(phi),
                     y: this.velocidade * Math.sin(phi)
@@ -162,13 +126,13 @@
             },
 
             atualizar: function() {
-                // atualiza a posi√ß√£o com a velocidade atual
+                // atualiza a posiÁ„o com a velocidade atual
                 this.x += this.vel.x;
                 this.y += this.vel.y;
-                //checando se  sai dos limites da tela na posi√ß√£o Y
+                //checando se  sai dos limites da tela na posiÁ„o Y
                 if (0 > this.y || this.y + this.diametro > ALTURA) {
                     // calculate and add the right offset, i.e. how far
-                    // inside of the canvas the ball is
+                    // inside of the canvas the bola is
                     var offset = this.vel.y < 0 ? 0 - this.y : ALTURA - (this.y + this.diametro);
                     this.y += 2 * offset;
                     // mirror the y velocity
@@ -180,13 +144,13 @@
                     return ax < bx+bw && ay < by+bh && bx < ax+aw && by < ay+ah;
                 };
 
-                // detectando colis√£o
-                var pdle = this.vel.x < 0 ? jogador1 : jogador2;
+                // detectando colis„o
+                var pdle = this.vel.x < 0 ? jogador1 : ai;
                 if (AABBIntersect(pdle.x, pdle.y, pdle.largura, pdle.altura,
                         this.x, this.y, this.diametro, this.diametro)
                 ) { 
                     // set the x position and calculate reflection angle
-                    this.x = pdle === jogador1 ? jogador1.x + jogador1.largura : jogador2.x - this.diametro;
+                    this.x = pdle === jogador1 ? jogador1.x + jogador1.largura : ai.x - this.diametro;
                     var n = (this.y + this.diametro - pdle.y) / (pdle.altura + this.diametro);
                     var phi = 0.25 * Math.PI * (2 * n - 1); // pi/4 = 45
                     // calculate smash value and update velocity
@@ -195,10 +159,10 @@
                     this.vel.y = batida * this.velocidade * Math.sin(phi);
                 }
 
-                // coloca a bola novamente no campo na posi√ß√£o X que ela saiu.
+                // coloca a bola novamente no campo na posiÁ„o X que ela saiu.
                 if (0 > this.x + this.diametro || this.x > LARGURA) {
                     if (pdle === jogador1)
-                        jogador2.pontos += 1;
+                        ai.pontos += 1;
                     else
                         jogador1.pontos += 1;
                     this.configurar(pdle === jogador1 ? 1 : -1);
@@ -233,44 +197,114 @@
     function atualizar() {
         bola.atualizar();
         jogador1.atualizar();
-        jogador2.atualizar();
+        ai.atualizar();
     }
 
 
     function desenhar(){
         ctx.fillRect(0, 0, LARGURA, ALTURA);
 
-        //entender melhor como funciona essa baga√ßa...
+        //entender melhor como funciona essa bagaÁa...
         ctx.save();
 
         ctx.fillStyle = "#fff";
 
         jogador1.desenhar();
-        jogador2.desenhar();
+        ai.desenhar();
         bola.desenhar();
 
-        //Definindo uma vari√°vel para dizer qual o tamanho da largura da linha
+        //Definindo uma vari·vel para dizer qual o tamanho da largura da linha
         var larguraLinha = 4;
-        //Definindo outra vari√°vel para dizer qual ser√° a posi√ß√£o X da linha, que no caso, como eu quero colocar no meio do campo, seria a ‚Äúlargura do campo‚Äù menos a ‚Äúlargura da linha‚Äù divido por 2
+        //Definindo outra vari·vel para dizer qual ser· a posiÁ„o X da linha, que no caso, como eu quero colocar no meio do campo, seria a ìlargura do campoî menos a ìlargura da linhaî divido por 2
         var x = (LARGURA - larguraLinha) / 2;
-        //Definindo outra vari√°vel para dizer a posi√ß√£o Y a partir de onde ser√° desenhado o tracejado
+        //Definindo outra vari·vel para dizer a posiÁ„o Y a partir de onde ser· desenhado o tracejado
         var y = 0;
-        //aqui estamos definindo outra vari√°vel para dizer qual ser√° a  dist√¢ncia entre um tra√ßo e outro
+        //aqui estamos definindo outra vari·vel para dizer qual ser· a  dist‚ncia entre um traÁo e outro
         var passo = ALTURA/20; // how many net segments
         while (y < ALTURA) {
-            //"x" define a posi√ß√£o X do ret√¢ngulo, y diz a posi√ß√£o Y do ret√¢ngulo, estamos somando com passo / 4 pois queremos que ele fique no come√ßo da tela com um espa√ßo de 1/4 sem estar pintado. A "larguraLinha" diz a largura do ret√¢ngulo, e o passo / 2 √© que queremos que o tamanho vertical dele sej√° igual a metade (1/2) do passo.
+            //"x" define a posiÁ„o X do ret‚ngulo, y diz a posiÁ„o Y do ret‚ngulo, estamos somando com passo / 4 pois queremos que ele fique no comeÁo da tela com um espaÁo de 1/4 sem estar pintado. A "larguraLinha" diz a largura do ret‚ngulo, e o passo / 2 È que queremos que o tamanho vertical dele sej· igual a metade (1/2) do passo.
             ctx.fillRect(x, y + passo / 4, larguraLinha, passo / 2);
             y += passo;
         }
 
-        //entender melhor como funciona essa baga√ßa...
+        //entender melhor como funciona essa bagaÁa...
         ctx.restore();
         //createAndSendDocument();        
     }
+	
+	//**************************\\
+	
+    var reqAnimationFrame = (function () {
+        return window[Hammer.prefixed(window, 'requestAnimationFrame')] || function (callback) {
+            window.setTimeout(callback, 1000 / 60);
+        };
+    })();
 
+    var el = document.querySelector("#hit");
+	var onEnd = false;
+
+    var START_X = 0; 
+    var START_Y = POS_INI_Y;
+
+    var ticking = false;
+    var transform;
+
+    var mc = new Hammer.Manager(el);
+
+    mc.add(new Hammer.Pan({ threshold: 0, pointers: 0 }));
+
+	mc.on("panmove", onPan);
+	mc.on("panend", onPanEnd);
+
+    function resetElement() {
+		var hit = document.getElementById("hit");
+		el.style.width = jogador1.largura + 'px';
+		el.style.height = jogador1.altura + 'px';
+		transform = {
+			translate: { x: START_X, y: START_Y },
+			scale: 1,
+			angle: 0,
+			rx: 0,
+			ry: 0,
+			rz: 0
+		};
+        requestElementUpdate();
+    }
+
+    function updateElementTransform() {
+        var value = [
+                    'translate3d(' + transform.translate.x + 'px, ' + transform.translate.y + 'px, 0)'
+        ];
+        el.style.transform = value;
+        ticking = false;
+    }
+
+    function requestElementUpdate() {
+        if(!ticking) {
+            reqAnimationFrame(updateElementTransform);
+            ticking = true;
+        }
+    }
+	
+    function onPan(ev) {
+        el.className = '';
+		transform.translate = {
+			x: 0 + START_X,
+			y: ev.deltaY + START_Y
+		};
+		jogador1.y = transform.translate.y;
+        requestElementUpdate();
+    }
+	
+	function onPanEnd(ev) { 
+		START_X = transform.translate.x;
+		START_Y = transform.translate.y;
+		onEnd = true;
+	}
+	
+	resetElement();
+	
     main();
-
-
     </script>
 </body>
 </html>
