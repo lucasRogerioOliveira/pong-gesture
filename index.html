@@ -1,48 +1,56 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
+
   <head>
-    <meta charset="utf-8">
+    <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Pong-gesture by lucasRogerioOliveira</title>
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-    <script src="javascripts/respond.js"></script>
-    <!--[if lt IE 9]>
-      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <!--[if lt IE 8]>
-    <link rel="stylesheet" href="stylesheets/ie.css">
-    <![endif]-->
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="description" content="Pong-gesture : the &quot;pong&quot; game but with gestures controls">
 
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Pong-gesture</title>
   </head>
+
   <body>
-      <div id="header">
-        <nav>
-          <li class="fork"><a href="https://github.com/lucasRogerioOliveira/pong-gesture">View On GitHub</a></li>
-          <li class="downloads"><a href="https://github.com/lucasRogerioOliveira/pong-gesture/zipball/master">ZIP</a></li>
-          <li class="downloads"><a href="https://github.com/lucasRogerioOliveira/pong-gesture/tarball/master">TAR</a></li>
-          <li class="title">DOWNLOADS</li>
-        </nav>
-      </div><!-- end header -->
 
-    <div class="wrapper">
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/lucasRogerioOliveira/pong-gesture">View on GitHub</a>
 
-      <section>
-        <div id="title">
-          <h1>Pong-gesture</h1>
-          <p>the &quot;pong&quot; game but with gestures controls</p>
-          <hr>
-          <span class="credits left">Project maintained by <a href="https://github.com/lucasRogerioOliveira">lucasRogerioOliveira</a></span>
-          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></span>
-        </div>
+          <h1 id="project_title">Pong-gesture</h1>
+          <h2 id="project_tagline">the &quot;pong&quot; game but with gestures controls</h2>
 
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/lucasRogerioOliveira/pong-gesture/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/lucasRogerioOliveira/pong-gesture/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
         <h1>
-<a name="como-fazer-um-jogo-de-pong-com-realidade-aumentada-usando-trackingjs" class="anchor" href="#como-fazer-um-jogo-de-pong-com-realidade-aumentada-usando-trackingjs"><span class="octicon octicon-link"></span></a>Como fazer um jogo de Pong com realidade aumentada usando tracking.js</h1>
+<a id="versões-desenvolvidas-para-o-projeto-de-ihc-do-jogo-pong-com-diferentes-interações" class="anchor" href="#vers%C3%B5es-desenvolvidas-para-o-projeto-de-ihc-do-jogo-pong-com-diferentes-intera%C3%A7%C3%B5es" aria-hidden="true"><span class="octicon octicon-link"></span></a>Versões desenvolvidas para o projeto de IHC do jogo Pong com diferentes Interações:</h1>
+
+<p><a href="https://github.com/lucasRogerioOliveira/pong-gesture">Versao por Movimento de Cores</a>
+<a href="http://jsfiddle.net/LucAlucard/asr1qodf/">JSFiddle</a></p>
+
+<p><a href="https://github.com/lucasRogerioOliveira/pong-gesture">Versao com Movimento da Face</a>
+<a href="http://jsfiddle.net/LucAlucard/ffvrng4d/">JSFiddle</a></p>
+
+<p><a href="https://github.com/lucasRogerioOliveira/pong-gesture">Versao Toque para Celulares</a>
+<a href="http://jsfiddle.net/LucAlucard/nxtej5L6/">JSFiddle</a></p>
+
+<h1>
+<a id="tutorial-da-versao-por-movimento-de-cores" class="anchor" href="#tutorial-da-versao-por-movimento-de-cores" aria-hidden="true"><span class="octicon octicon-link"></span></a>Tutorial da Versao por Movimento de Cores:</h1>
+
+<h2>
+<a id="como-fazer-um-jogo-de-pong-com-realidade-aumentada-usando-trackingjs" class="anchor" href="#como-fazer-um-jogo-de-pong-com-realidade-aumentada-usando-trackingjs" aria-hidden="true"><span class="octicon octicon-link"></span></a>Como fazer um jogo de Pong com realidade aumentada usando tracking.js</h2>
 
 <h3>
-<a name="grupo-lucas-rog%C3%A9rio-lucas-rodrigues" class="anchor" href="#grupo-lucas-rog%C3%A9rio-lucas-rodrigues"><span class="octicon octicon-link"></span></a>Grupo: Lucas Rogério, Lucas Rodrigues</h3>
+<a id="grupo-lucas-rogério-lucas-rodrigues" class="anchor" href="#grupo-lucas-rog%C3%A9rio-lucas-rodrigues" aria-hidden="true"><span class="octicon octicon-link"></span></a>Grupo: Lucas Rogério, Lucas Rodrigues</h3>
 
 <p>Nesse tutorial iremos aprender a criar um jogo simples de pong usando uma biblioteca de realidade aumentada tracking.js, portanto, baixe a mesma no link: “<a href="http://trackingjs.com/%E2%80%9D">http://trackingjs.com/”</a> para que possamos  criar o game
 Primeiro iremos criar o documento HTML</p>
@@ -380,14 +388,22 @@ A função main no final das contas estará dessa forma:</p>
 <p><img src="http://s30.postimg.org/exoafy9k1/campo_5.png" alt="jogo completo"></p>
 
 <h3>
-<a name="refer%C3%AAncia" class="anchor" href="#refer%C3%AAncia"><span class="octicon octicon-link"></span></a>Referência:</h3>
+<a id="referência" class="anchor" href="#refer%C3%AAncia" aria-hidden="true"><span class="octicon octicon-link"></span></a>Referência:</h3>
 
 <p><a href="https://github.com/maxwihlborg/youtube-tutorials/blob/master/pong/index.html">https://github.com/maxwihlborg/youtube-tutorials/blob/master/pong/index.html</a>
 <a href="http://trackingjs.com/docs.html#introduction">http://trackingjs.com/docs.html#introduction</a></p>
       </section>
-
     </div>
-    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Pong-gesture maintained by <a href="https://github.com/lucasRogerioOliveira">lucasRogerioOliveira</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
     
+
   </body>
 </html>
